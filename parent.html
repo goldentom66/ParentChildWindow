@@ -1,12 +1,14 @@
+
 <!DOCTYPE html>
 <html>
 <body>
 <script>
-//Store the opened child information as json in the local storage
+// Store the opened child information as json in the local storage
 function openChild(childPage, childName) {
 	var childrenString = localStorage.getItem('allOpenChildren') || '{}';
 	var childrenObject = JSON.parse(childrenString);
 	
+	// Append the win to the page url. This code might be changed by you for your case
 	childPage += "?win=" + childName;
 	childrenObject[childName] = childPage;
 	
@@ -15,29 +17,39 @@ function openChild(childPage, childName) {
 	window.open(childPage, childName);
 }
 
+// Set the parentStatus to 'open' when loading the parent page. When refersh the page, it will override the parentStatus that was set by unloading page
 window.onload = setStatus;
 function setStatus() {
 	localStorage.setItem('parentStatus', 'open');
 }
 
+
 window.onbeforeunload = close;
 function close() {
+	// Change the parentStatus to 'close' when unloading the parent page. 
 	console.log("place1:" + localStorage.getItem('parentStatus'));	
 	localStorage.setItem('parentStatus', 'close');
 	var event = new Event('parentStatusChanged');
 	
+	// Check all the opened children window to see if they are still open
 	var childrenString = localStorage.getItem('allOpenChildren') || '{}';
 	var childrenObject = JSON.parse(childrenString);
 	for (var childName in childrenObject) {
 		var childPage = childrenObject[childName];
+		
+		// Open the child window to test if it's in open
 		var child = window.open("", childName);
 		var childExist = true;
 		if (child.location.href === "about:blank") {
 			childExist = false;
 		}
+		
+		// If child window is open, disptach the event of closing parent window
 		if (childExist) {
-			child.document.dispatchEvent(event);
-		} else {
+			child.document.dispatchEvent(event);		
+		}
+		// If child window is closed, close the new opened test window. In case that the child window is somehow closed without updating 'allOpenChildren'
+		else {			
 			child.close();
 		}
 	}
