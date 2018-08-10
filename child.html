@@ -3,6 +3,7 @@
 <body>
 <script>
 function checkParentStatus() {	
+	// Use setTimeout to wait for the 'parentStatus' to be updated by refresh parent.
 	setTimeout(function() {
 		if (localStorage.getItem('parentStatus') === 'close') {
 			doSomethingWhenParentClosed();
@@ -11,10 +12,11 @@ function checkParentStatus() {
 }
 
 function doSomethingWhenParentClosed() {
-	// Add your code here
+	// Replace to be your code here
 	document.getElementById('showresult').innerHTML += '<div>place2:' + localStorage.getItem('parentStatus') + '</div>';
 }
 
+// Get the parameter in the URL
 function findGetParameter(parameterName) {
     var result = null,
         tmp = [];
@@ -33,9 +35,11 @@ function onLoadChild() {
 	listenOnParentClose();
 	addIntoLocalStorage();
 }
+// Listen on the event which is emit when parent was unloaded
 function listenOnParentClose() {
 	document.addEventListener('parentStatusChanged', checkParentStatus, false);
 }
+// Add current window URL into localStorage "allOpenChildren"
 function addIntoLocalStorage() {
 	var childWin = findGetParameter("win");
 	var childrenString = localStorage.getItem('allOpenChildren') || '{}';
@@ -46,6 +50,7 @@ function addIntoLocalStorage() {
 }
 
 window.onbeforeunload = removeFromLocalStorage;
+// Remove current window from localStorage "allOpenChildren"
 function removeFromLocalStorage() {
 	var childWin = findGetParameter("win");
 	var childrenString = localStorage.getItem('allOpenChildren') || '{}';
