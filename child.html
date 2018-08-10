@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function checkParentStatus() {	
+	setTimeout(function() {
+		if (localStorage.getItem('parentStatus') === 'close') {
+			doSomethingWhenParentClosed();
+		}		
+	}, 1000);
+}
+
+function doSomethingWhenParentClosed() {
+	// Add your code here
+	document.getElementById('showresult').innerHTML += '<div>place2:' + localStorage.getItem('parentStatus') + '</div>';
+}
+
+function findGetParameter(parameterName) {
+    var result = null,
+        tmp = [];
+    location.search
+        .substr(1)
+        .split("&")
+        .forEach(function (item) {
+          tmp = item.split("=");
+          if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+        });
+    return result;
+}
+
+window.onload = onLoadChild;
+function onLoadChild() {
+	listenOnParentClose();
+	addIntoLocalStorage();
+}
+function listenOnParentClose() {
+	document.addEventListener('parentStatusChanged', checkParentStatus, false);
+}
+function addIntoLocalStorage() {
+	var childWin = findGetParameter("win");
+	var childrenString = localStorage.getItem('allOpenChildren') || '{}';
+	var childrenObject = JSON.parse(childrenString);
+	childrenObject[childWin] = location.href;
+	
+	localStorage.setItem('allOpenChildren', JSON.stringify(childrenObject));
+}
+
+window.onbeforeunload = removeFromLocalStorage;
+function removeFromLocalStorage() {
+	var childWin = findGetParameter("win");
+	var childrenString = localStorage.getItem('allOpenChildren') || '{}';
+	var childrenObject = JSON.parse(childrenString);
+	delete childrenObject[childWin];
+	
+	localStorage.setItem('allOpenChildren', JSON.stringify(childrenObject));
+}
+
+
+</script>
+<div id="showresult"></div>
+</body>
+</html>

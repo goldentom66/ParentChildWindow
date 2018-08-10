@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+//Store the opened child information as json in the local storage
+function openChild(childPage, childName) {
+	var childrenString = localStorage.getItem('allOpenChildren') || '{}';
+	var childrenObject = JSON.parse(childrenString);
+	
+	childPage += "?win=" + childName;
+	childrenObject[childName] = childPage;
+	
+	localStorage.setItem('allOpenChildren', JSON.stringify(childrenObject));
+
+	window.open(childPage, childName);
+}
+
+window.onload = setStatus;
+function setStatus() {
+	localStorage.setItem('parentStatus', 'open');
+}
+
+window.onbeforeunload = close;
+function close() {
+	console.log("place1:" + localStorage.getItem('parentStatus'));	
+	localStorage.setItem('parentStatus', 'close');
+	var event = new Event('parentStatusChanged');
+	
+	var childrenString = localStorage.getItem('allOpenChildren') || '{}';
+	var childrenObject = JSON.parse(childrenString);
+	for (var childName in childrenObject) {
+		var childPage = childrenObject[childName];
+		var child = window.open("", childName);
+		var childExist = true;
+		if (child.location.href === "about:blank") {
+			childExist = false;
+		}
+		if (childExist) {
+			child.document.dispatchEvent(event);
+		} else {
+			child.close();
+		}
+	}
+	
+	return null;
+}
+
+
+function testClose() {
+	close();
+}
+</script>
+
+<a style="cursor:pointer" onClick="openChild('child.html', 'child1')"><u>open child1</u></a>
+<a style="cursor:pointer" onClick="openChild('child.html', 'child2')"><u>open child2</u></a>
+<button onClick="testClose()">Test close function</button>
+</body>
+</html>
