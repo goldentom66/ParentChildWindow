@@ -3,7 +3,7 @@
 <body>
 <script>
 function checkParentStatus() {	
-	// Use setTimeout to wait for the 'parentStatus' to be updated by refresh parent.
+	// Use setTimeout to wait for the 'parentStatus' to be updated when refreshing parent
 	setTimeout(function() {
 		if (localStorage.getItem('parentStatus') === 'close') {
 			doSomethingWhenParentClosed();
@@ -12,7 +12,7 @@ function checkParentStatus() {
 }
 
 function doSomethingWhenParentClosed() {
-	// Replace to be your code here
+	// Replace code below to be yours here
 	document.getElementById('showresult').innerHTML += '<div>place2:' + localStorage.getItem('parentStatus') + '</div>';
 }
 
