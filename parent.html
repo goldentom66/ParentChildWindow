@@ -26,8 +26,7 @@ function setStatus() {
 
 window.onbeforeunload = close;
 function close() {
-	// Change the parentStatus to 'close' when unloading the parent page. 
-	console.log("place1:" + localStorage.getItem('parentStatus'));	
+	// Change the parentStatus to 'close' when unloading the parent page. 	
 	localStorage.setItem('parentStatus', 'close');
 	var event = new Event('parentStatusChanged');
 	
